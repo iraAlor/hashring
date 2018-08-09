@@ -16,7 +16,7 @@ func (h HashKeyOrder) Less(i, j int) bool { return h[i] < h[j] }
 
 // Options contains configuration options for ring
 type Options struct {
-	repFactor int
+	RepFactor int
 }
 
 type HashRing struct {
@@ -29,8 +29,8 @@ type HashRing struct {
 
 func NewWithOptions(nodes []string, opts Options) *HashRing {
 	rf := 3
-	if opts.repFactor > 0 {
-		rf = opts.repFactor
+	if opts.RepFactor > 0 {
+		rf = opts.RepFactor
 	}
 	hashRing := &HashRing{
 		ring:       make(map[HashKey]string),
