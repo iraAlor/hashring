@@ -43,7 +43,7 @@ func NewWithOptions(nodes []string, opts Options) *HashRing {
 	return hashRing
 }
 
-func New(nodes []string, opts Options) *HashRing {
+func New(nodes []string) *HashRing {
 	rf := 3
 	hashRing := &HashRing{
 		ring:       make(map[HashKey]string),
