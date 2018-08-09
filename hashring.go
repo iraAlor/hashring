@@ -44,9 +44,10 @@ func NewWithOptions(nodes []string, opts Options) *HashRing {
 }
 
 func New(nodes []string, opts Options) *HashRing {
-
+	rf := 3
 	hashRing := &HashRing{
 		ring:       make(map[HashKey]string),
+		repFactor:  rf,
 		sortedKeys: make([]HashKey, 0),
 		nodes:      nodes,
 		weights:    make(map[string]int),
@@ -60,7 +61,9 @@ func NewWithWeights(weights map[string]int) *HashRing {
 	for node, _ := range weights {
 		nodes = append(nodes, node)
 	}
+	rf := 3
 	hashRing := &HashRing{
+		repFactor:  rf,
 		ring:       make(map[HashKey]string),
 		sortedKeys: make([]HashKey, 0),
 		nodes:      nodes,
@@ -212,6 +215,7 @@ func (h *HashRing) AddWeightedNode(node string, weight int) *HashRing {
 	weights[node] = weight
 
 	hashRing := &HashRing{
+		repFactor:  h.repFactor,
 		ring:       make(map[HashKey]string),
 		sortedKeys: make([]HashKey, 0),
 		nodes:      nodes,
@@ -241,6 +245,7 @@ func (h *HashRing) UpdateWeightedNode(node string, weight int) *HashRing {
 	weights[node] = weight
 
 	hashRing := &HashRing{
+		repFactor:  h.repFactor,
 		ring:       make(map[HashKey]string),
 		sortedKeys: make([]HashKey, 0),
 		nodes:      nodes,
@@ -270,6 +275,7 @@ func (h *HashRing) RemoveNode(node string) *HashRing {
 	}
 
 	hashRing := &HashRing{
+		repFactor:  h.repFactor,
 		ring:       make(map[HashKey]string),
 		sortedKeys: make([]HashKey, 0),
 		nodes:      nodes,
