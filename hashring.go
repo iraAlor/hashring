@@ -14,14 +14,37 @@ func (h HashKeyOrder) Len() int           { return len(h) }
 func (h HashKeyOrder) Swap(i, j int)      { h[i], h[j] = h[j], h[i] }
 func (h HashKeyOrder) Less(i, j int) bool { return h[i] < h[j] }
 
+// Options contains configuration options for ring
+type Options struct {
+	repFactor int
+}
+
 type HashRing struct {
 	ring       map[HashKey]string
+	repFactor  int
 	sortedKeys []HashKey
 	nodes      []string
 	weights    map[string]int
 }
 
-func New(nodes []string) *HashRing {
+func NewWithOptions(nodes []string, opts Options) *HashRing {
+	rf := 3
+	if opts.repFactor > 0 {
+		rf = opts.repFactor
+	}
+	hashRing := &HashRing{
+		ring:       make(map[HashKey]string),
+		repFactor:  rf,
+		sortedKeys: make([]HashKey, 0),
+		nodes:      nodes,
+		weights:    make(map[string]int),
+	}
+	hashRing.generateCircle()
+	return hashRing
+}
+
+func New(nodes []string, opts Options) *HashRing {
+
 	hashRing := &HashRing{
 		ring:       make(map[HashKey]string),
 		sortedKeys: make([]HashKey, 0),
@@ -94,7 +117,7 @@ func (h *HashRing) generateCircle() {
 			nodeKey := fmt.Sprintf("%s-%d", node, j)
 			bKey := hashDigest(nodeKey)
 
-			for i := 0; i < 3; i++ {
+			for i := 0; i < h.repFactor; i++ {
 				key := hashVal(bKey[i*4 : i*4+4])
 				h.ring[key] = node
 				h.sortedKeys = append(h.sortedKeys, key)
